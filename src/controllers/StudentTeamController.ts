@@ -68,3 +68,37 @@ export const registerStudents: RequestHandler = async (
     });
   }
 };
+
+export const getStudentsByTeamId: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const rawData: StudentTeam[] = await StudentTeam.findAll({
+      where: {
+        id_team: id,
+      },
+      include: [
+        {
+          model: StudentTeam,
+        },
+      ],
+    });
+    const data = rawData.map((element) => ({
+      studentId: element.student.id,
+      teamId: element.team.id,
+    }));
+    res.status(200).json({
+      message: "Estudiantes del equipo obtenidos exitosamente",
+      payload: data,
+      status: "success",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error en el servidor",
+      payload: null,
+      status: "error",
+    });
+  }
+};

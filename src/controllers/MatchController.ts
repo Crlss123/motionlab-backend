@@ -112,3 +112,37 @@ export const createMatch: RequestHandler = async (
     });
   }
 };
+
+export const getMatchParameters: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { id } = req.params;
+    const match = await Match.findByPk(id);
+    if (!match) {
+      res.status(404).json({
+        message: "Partida no encontrada",
+        payload: null,
+        status: "error",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Parámetros de la partida obtenidos exitosamente",
+      payload: {
+        rpm: match.rpm,
+        wheel_size: match.wheel_size,
+        distance: match.distance,
+      },
+      status: "success",
+    });
+  } catch (error) {
+    console.error("Error al obtener los parámetros de la partida:", error);
+    res.status(500).json({
+      message: "Error en el servidor",
+      payload: null,
+      status: "error",
+    });
+  }
+};
