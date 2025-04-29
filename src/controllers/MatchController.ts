@@ -146,3 +146,37 @@ export const getMatchParameters: RequestHandler = async (
     });
   }
 };
+
+export const getMatchByCode: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { code } = req.params;
+    const match = await Match.findOne({
+      where: {
+        code: code,
+      },
+    });
+    if (!match) {
+      res.status(404).json({
+        message: "Partida no encontrada",
+        payload: null,
+        status: "error",
+      });
+      return;
+    }
+    res.status(200).json({
+      message: "Partida obtenida exitosamente",
+      payload: match,
+      status: "success",
+    });
+  } catch (error) {
+    console.error("Error al obtener la partida:", error);
+    res.status(500).json({
+      message: "Error en el servidor",
+      payload: null,
+      status: "error",
+    });
+  }
+};
